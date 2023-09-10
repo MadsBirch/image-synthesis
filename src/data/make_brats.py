@@ -24,19 +24,14 @@ def extract_brats_tar(tar_path, extract_path):
 
 def setup_directory_structure():
     
-    logger.info("Setting up data folders.")
+    logger.info("Setting up data directory.")
 
     if os.path.isdir('data'):
         shutil.rmtree('data')
         
-    os.makedirs('data/processed')
+    os.makedirs('data/processed/train')
+    os.makedirs('data/processed/val')
     os.makedirs('data/raw')
-    
-    train_path = os.path.join('data/processed', "train")
-    val_path = os.path.join('data/processed', "val")
-    
-    os.mkdir(train_path)
-    os.mkdir(val_path)
 
 
 def preprocess_brats(output_filepath:list, modalities:list):
@@ -68,18 +63,26 @@ def preprocess_brats(output_filepath:list, modalities:list):
         
 
 def train_val_split(output_filepath, data_split=0.8):
-        
+    logger.info(f"Splitting into train and validation sets with split percentage {data_split}")
+    
+    # creating train and validation lists with random sampling with defined split size.
     samples = glob.glob(os.path.join(output_filepath, '*.nii.gz'))
     samples_train = random.sample(samples, int(len(samples)*data_split))
     samples_valid = [mri_sample for mri_sample in samples
                              if mri_sample not in samples_train]
     
+    # moving train files
     for sample in samples_train:
-        new_sample_path = os.path.join(output_filepath, 'train', sample)
+        
+        sample_name = sample.split('/')[-1]
+        new_sample_path = os.path.join(output_filepath, 'train', sample_name)
+        print(new_sample_path)
         os.rename(sample, new_sample_path)
     
+    # moving val files
     for sample in samples_valid:
-        new_sample_path = os.path.join(output_filepath, 'val', sample)
+        sample_name = sample.split('/')[-1]
+        new_sample_path = os.path.join(output_filepath, 'val', sample_name)
         os.rename(sample, new_sample_path)
         
 
