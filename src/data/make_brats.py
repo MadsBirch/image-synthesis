@@ -76,7 +76,6 @@ def train_val_split(output_filepath, data_split=0.8):
         
         sample_name = sample.split('/')[-1]
         new_sample_path = os.path.join(output_filepath, 'train', sample_name)
-        print(new_sample_path)
         os.rename(sample, new_sample_path)
     
     # moving val files
