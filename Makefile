@@ -9,6 +9,7 @@ BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
 PROFILE = default
 PROJECT_NAME = image_synth
 PYTHON_INTERPRETER = python3
+RAW_DATA_PATH = "/Users/madsbirch/Data/Brats2021-Raw/BraTS2021_Training_Data.tar"
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -26,8 +27,8 @@ requirements: test_environment
 	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
 
 ## Make Dataset
-data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed
+brats: 
+	$(PYTHON_INTERPRETER) src/data/make_brats.py $(RAW_DATA_PATH) data/processed
 
 ## Delete all compiled Python files
 clean:
